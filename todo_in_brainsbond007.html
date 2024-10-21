@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainsBond007 - Detailed Project Overview</title>
+    <style>
+        /* General Style */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #3498db, #8e44ad);
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-size: 3.2em;
+            letter-spacing: 2px;
+            color: #ecf0f1;
+            text-shadow: 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        h1::after {
+            content: '';
+            width: 120px;
+            height: 4px;
+            background: #ecf0f1;
+            display: block;
+            margin: 10px auto;
+            border-radius: 5px;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: violet;
+            text-shadow: 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        h3 {
+            font-size: 1.6em;
+            color: #34495e;
+        }
+
+        /* Section and Box Styling */
+        section {
+            width: 85%;
+            max-width: 1300px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .box {
+            margin: 20px 0;
+            background-color: #ecf0f1;
+            border-left: 6px solid #2980b9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .box h3 {
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2980b9;
+        }
+
+        .box p,
+        .box ul {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 1.15em;
+            line-height: 1.7;
+        }
+
+        ul {
+            margin-left: 20px;
+            list-style-type: disc;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            background-color: #34495e;
+            color: #ecf0f1;
+            font-size: 1em;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.4em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            h3 {
+                font-size: 1.4em;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>BrainsBond007</h1>
+
+    <section class="content">
+        <h2>Admin Side</h2>
+
+        <div class="box">
+            <h3>Login/Sign Up</h3>
+            <p>The admin of BrainsBond007 can log in or sign up to access the system's management dashboard. This
+                section will feature secure login credentials (username, email, password), and potentially two-factor
+                authentication to enhance security. The admin panel will be the control center for managing employee
+                details and monitoring performance.</p>
+        </div>
+
+        <div class="box">
+            <h3>Upload Employee Details</h3>
+            <p>Admins can upload employee details. Each entry will include:
+            <ul>
+                <li>Name</li>
+                <li>Age</li>
+                <li>Email</li>
+                <li>Images</li>
+                <li>CNIC/ID</li>
+                <li>Working Hrs</li>
+                <li>Allow Remote (y/n)</li>
+                <li>Allowed Remote Locations</li>
+
+
+            </ul>
+            The system allows editing and deleting employees, giving the admin full control over the employee database.
+            </p>
+        </div>
+
+        <div class="box">
+            <h3>Upload Office/Work Locations</h3>
+            <p>Admins can upload specific office locations. This is particularly useful for tracking remote employees
+                and comparing their actual location to the allowed office or remote work locations using geofencing
+                technology. Google Maps API will assist in defining and managing these locations.</p>
+        </div>
+
+        <div class="box">
+            <h3>Admin Dashboard</h3>
+            <p>The admin dashboard will display the following key sections:
+            <ul>
+                <li><strong>Employee Stats:</strong> Overall performance, attendance, and activities of employees.</li>
+                <li><strong>Charts/Graphs:</strong> Visual statistics based on attendance, working hours, and remote job
+                    activity.</li>
+                <li><strong>Settings:</strong> Manage security preferences, employee access levels, and general system
+                    settings.</li>
+            </ul>
+            The dashboard will allow the admin to view screenshots and images of employees working, as well as live
+            webcam feeds.</p>
+        </div>
+
+        <div class="box">
+            <h3>Live Event Monitoring</h3>
+            <p>Admins will be able to monitor employees live through the webcam. Screenshots and random images will be
+                captured during work hours for verification purposes. This will require using a streaming API,
+                potentially something like WebRTC, since face-api.js is primarily designed for static image processing.
+            </p>
+        </div>
+
+
+        <div class="box">
+            <h3>Create Dynamic EXE for Each Admin/User</h3>
+            <p>Admins can create a dynamic executable (EXE) file for each admin or user. This EXE will include custom
+                configurations, allowing for individualized use of the system.</p>
+        </div>
+
+        <div class="box">
+            <h3>Allow/Disallow Remote/Onsite for Each Employee</h3>
+            <p>The admin can now set whether an employee is allowed to work remotely or must be present onsite. This
+                option provides more control over employee working conditions and permissions.</p>
+        </div>
+    </section>
+
+    <section class="content">
+        <h2>Employee Side</h2>
+        <div class="box">
+            <h3>Location Verification</h3>
+            <p>For remote employees, the system checks their current location using the Google Maps API. If they are
+                working remotely, the system compares their location with predefined office or job site locations (up to
+                3 allowed locations). If the employee is not within the permitted range, a notification is sent to the
+                admin for further action.</p>
+        </div>
+
+        <div class="box">
+            <h3>Camera Access & Face Match</h3>
+            <p>The system will access the employee's camera and take a picture upon logging in. The face recognition
+                algorithm (using face-api.js) will compare the captured image to the one stored in the system. If the
+                match score is less than 70%, the system will request an ID card scan for further verification.</p>
+        </div>
+
+        <div class="box">
+            <h3>Session Monitoring</h3>
+            <p>Once authenticated, the system will begin the session. During the session, random screenshots will be
+                captured along with random webcam images. This helps ensure that the employee is active and working
+                within their designated working hours. The system will automatically capture 5 images at random
+                intervals throughout the session.</p>
+        </div>
+
+        <div class="box">
+            <h3>Live Screen Casting</h3>
+            <p>The system now enables live screen casting. Admins can view an employee's screen in real-time to monitor
+                activities and ensure compliance with the assigned tasks.</p>
+        </div>
+
+        <div class="box">
+            <h3>Seize System</h3>
+            <p>Admins have the ability to seize control of an employee's system remotely. This feature can be used in
+                cases of suspicious behavior or unauthorized activities.</p>
+        </div>
+
+        <div class="box">
+            <h3>Screen Away Monitoring</h3>
+            <p>In addition to random screenshots, the system will monitor if an employee moves away from their screen.
+                Alerts will be triggered if the system detects prolonged inactivity.</p>
+        </div>
+
+        <div class="box">
+            <h3>End Time Attendance</h3>
+            <p>Prompt the employee for attendance at the end of working hours.</p>
+        </div>
+
+    </section>
+
+    <section class="content">
+        <h2>Devised Technologies</h2>
+        <div class="box">
+            <h3>Admin Side Technologies</h3>
+            <p>The following technologies are used for developing the admin panel and backend of the BrainsBond007
+                project:</p>
+            <ul>
+                <li>Laravel - Backend framework</li>
+                <li>Vue - Frontend framework for interactive UI</li>
+                <li>Tailwind - CSS framework for design and layout</li>
+            </ul>
+        </div>
+
+        <div class="box">
+            <h3>APIs</h3>
+            <p>The project integrates with external APIs to enhance functionality:</p>
+            <ul>
+                <li>Google Maps API - For location verification and geofencing</li>
+            </ul>
+        </div>
+
+        <div class="box">
+            <h3>Client-Side EXE Technologies</h3>
+            <p>The following technologies are used in the client-side executable (EXE) development for the BrainsBond007
+                system:</p>
+            <ul>
+                <li>Tensorflow - Machine learning library for face recognition</li>
+                <li>Tkinter - Python GUI toolkit for creating desktop applications</li>
+                <li>py2exe - Tool for converting Python scripts into Windows executables</li>
+                <li>ScreenCapture - For capturing screenshots and live screencast of the employee's desktop</li>
+                <li>CTYPES - For seizing the employee system in case of Misuse/Prohibited Action</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>BrainsBond007 &copy; 2024. All Rights Reserved.</p>
+    </footer>
+</body>
+
+</html>
