@@ -10,28 +10,35 @@ class PropController extends Controller
 {
    
     public function add_prop(Request $request)
-    {
-        $request->validate([
-            'country' => 'required|string|max:255',
-            'exe_url' => 'required|string|unique:props,exe_url',
-            'is_premium' => 'boolean',
-            'organization_location' => 'required|string|max:255',
-            'port' => 'required|integer',
-            'connection_url' => 'required|string|max:255',
-        ]);
+{
+    $request->validate([
+        'country' => 'required|string|max:255',
+        'exe_url' => 'required|string|unique:props,exe_url',
+        // 'is_premium' => 'boolean',
+        'organization_location' => 'required|string|max:255',
+    ]);
 
-        $prop = Prop::create([
-            'user_id' => Auth::id(),
-            'country' => $request->country,
-            'exe_url' => $request->exe_url,
-            'is_premium' => $request->is_premium ?? false,
-            'organization_location' => $request->organization_location,
-            'port' => $request->port,
-            'connection_url' => $request->connection_url,
-        ]);
+    $lastPort = Prop::max('port');
+    $port = $lastPort ? $lastPort + 1 : 1000; 
+    $siteUrl = config('app.url'); 
+    $authUsername = Auth::user()->username; 
+    $authId = Auth::id();
+    $connectionUrl = "{$siteUrl}/{$authUsername}/{$authId}/{$port}";
 
-        return response()->json($prop, 201);
-    }
+    $prop = Prop::create([
+        'user_id' => $authId,
+        'country' => $request->country,
+        'exe_url' => $request->exe_url,
+        // 'is_premium' => $request->is_premium ?? false,
+        'is_premium' => false,
+        'organization_location' => $request->organization_location,
+        'port' => $port,
+        'connection_url' => $connectionUrl,
+    ]);
+
+    return response()->json($prop, 201);
+}
+
 
    
     public function update_prop(Request $request)
