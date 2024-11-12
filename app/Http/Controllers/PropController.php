@@ -90,4 +90,32 @@ class PropController extends Controller
 
         return response()->json($props, 200);
     }
+
+    public function generate_exe()
+{
+    $user = Auth::user();
+    $prop = Prop::where('user_id', $user->id)->latest()->first();
+
+    if (!$prop) {
+        return response()->json(['error' => 'No prop found for the authenticated user.'], 404);
+    }
+
+    $connectionUrl = $prop->connection_url;
+    $port = $prop->port;
+
+    $exeGeneratorServer = env('EXE_GENERATOR_SERVER_URL'); 
+
+    $data = [
+        'connection_url' => $connectionUrl,
+        'port' => $port,
+    ];
+
+    $response = Http::post($exeGeneratorServer, $data);
+
+    if ($response->successful()) {
+        return response()->json(['status' => 'Waiting for exe to be generated.']);
+    } else {
+        return response()->json(['error' => 'Failed to generate exe.'], 500);
+    }
+}
 }

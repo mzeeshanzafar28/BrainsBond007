@@ -34,5 +34,8 @@ Route::middleware([
     Route::post('/delete-prop', [PropController::class, 'delete_prop']);
     Route::post('/get-props', [PropController::class, 'get_props']);
 
+    Route::post('/generate-exe', [PropController::class, 'generate_exe']);
+
+
 
 });

@@ -7,7 +7,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class StartScreencast implements ShouldBroadcast
+class StartScreencasting implements ShouldBroadcast
 {
     use InteractsWithSockets, SerializesModels;
 
