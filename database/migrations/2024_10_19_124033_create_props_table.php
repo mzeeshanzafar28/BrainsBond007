@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
             $table->string('country');
             $table->string('exe_url')->unique();
-            $table->boolean('is_premium')->default(false);  // Default false
+            $table->boolean('is_premium')->default(false); 
             $table->string('organization_location');
             $table->integer('port');
             $table->string('connection_url',255);

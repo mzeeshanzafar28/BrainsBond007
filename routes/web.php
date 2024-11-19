@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PropController;
+use App\Http\Controllers\WebSocketController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\FaceVerificationController;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -36,6 +40,22 @@ Route::middleware([
 
     Route::post('/generate-exe', [PropController::class, 'generate_exe']);
 
+    Route::post('/start-screencast', [WebSocketController::class, 'start_screencast']);
+    Route::post('/seize-system', [WebSocketController::class, 'seize_system']);
+    Route::post('/get-screenshots', [WebSocketController::class, 'get_screenshots']);
 
 
+});
+
+Route::post('/verify-location', [LocationController::class, 'verify_location']);
+Route::post('/verify-face', [FaceVerificationController::class, 'verify_face']);
+
+
+
+//dummy route for testing purposes
+Route::get('/get-test-employees', function () {
+    return response()->json([
+        ['name' => 'John Doe', 'role' => 'Developer'],
+        ['name' => 'Jane Smith', 'role' => 'Designer'],
+    ]);
 });
