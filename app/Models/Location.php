@@ -6,26 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
-class Prop extends Model
+class Location extends Model
 {
     protected $fillable = [
         'user_id',
-        'country',
-        'exe_url',
-        'is_premium',
-        'organization_location',
-        'port',
-        'connection_url',
+        'name',
+        'address',
+        'latitude',
+        'longitude',
+        'radius_meters',
+        'type',
+        'is_active',
     ];
 
     protected $casts = [
-        'is_premium' => 'boolean',
-        'port' => 'integer',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+        'radius_meters' => 'integer',
+        'is_active' => 'boolean',
     ];
 
-    /**
-     * The admin (user) who owns this prop/organization config.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -37,5 +37,13 @@ class Prop extends Model
     public function scopeForAdmin($query, $userId = null)
     {
         return $query->where('user_id', $userId ?? Auth::id());
+    }
+
+    /**
+     * Scope to only active locations.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

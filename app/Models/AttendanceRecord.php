@@ -6,26 +6,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 
-class Prop extends Model
+class AttendanceRecord extends Model
 {
     protected $fillable = [
+        'employee_id',
         'user_id',
-        'country',
-        'exe_url',
-        'is_premium',
-        'organization_location',
-        'port',
-        'connection_url',
+        'date',
+        'check_in',
+        'check_out',
+        'face_match_score',
+        'location_status',
+        'total_hours',
+        'status',
+        'notes',
     ];
 
     protected $casts = [
-        'is_premium' => 'boolean',
-        'port' => 'integer',
+        'date' => 'date',
+        'face_match_score' => 'float',
+        'total_hours' => 'decimal:2',
     ];
 
-    /**
-     * The admin (user) who owns this prop/organization config.
-     */
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

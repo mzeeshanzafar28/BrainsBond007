@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -29,6 +30,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'organization_name',
+        'plan_type',
+        'timezone',
     ];
 
     /**
@@ -63,5 +67,42 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Employees managed by this admin.
+     */
+    public function employees(): HasMany
+    {
+        return $this->hasMany(Employee::class);
+    }
+
+    /**
+     * Organization props/configs for this admin.
+     */
+    public function props(): HasMany
+    {
+        return $this->hasMany(Prop::class);
+    }
+
+    /**
+     * Locations managed by this admin.
+     */
+    public function locations(): HasMany
+    {
+        return $this->hasMany(Location::class);
+    }
+
+    /**
+     * Get employee count limit based on plan.
+     */
+    public function getEmployeeLimitAttribute(): int
+    {
+        return match ($this->plan_type) {
+            'starter' => 15,
+            'pro' => 50,
+            'enterprise' => 9999,
+            default => 3, // free
+        };
     }
 }

@@ -2,120 +2,116 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePropRequest;
+use App\Http\Requests\UpdatePropRequest;
+use App\Http\Resources\PropResource;
 use App\Models\Prop;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class PropController extends Controller
 {
-   
-    public function add_prop(Request $request)
-{
-    $request->validate([
-        'country' => 'required|string|max:255',
-        'exe_url' => 'required|string|unique:props,exe_url',
-        // 'is_premium' => 'boolean',
-        'organization_location' => 'required|string|max:255',
-    ]);
-
-    $lastPort = Prop::max('port');
-    $port = $lastPort ? $lastPort + 1 : 1000; 
-    $siteUrl = config('app.url'); 
-    $authUsername = Auth::user()->username; 
-    $authId = Auth::id();
-    $connectionUrl = "{$siteUrl}/{$authUsername}/{$authId}/{$port}";
-
-    $prop = Prop::create([
-        'user_id' => $authId,
-        'country' => $request->country,
-        'exe_url' => $request->exe_url,
-        // 'is_premium' => $request->is_premium ?? false,
-        'is_premium' => false,
-        'organization_location' => $request->organization_location,
-        'port' => $port,
-        'connection_url' => $connectionUrl,
-    ]);
-
-    return response()->json($prop, 201);
-}
-
-
-   
-    public function update_prop(Request $request)
+    /**
+     * Add new organization prop/client config.
+     */
+    public function add_prop(StorePropRequest $request): JsonResponse
     {
-        $prop_id = $request->validate([
-            'prop_id' => 'required|integer|exists:props,id'
-        ]);
+        $lastPort = Prop::max('port');
+        $port = $lastPort ? $lastPort + 1 : 1000;
+        $siteUrl = config('app.url');
+        $authSlug = Str::slug(Auth::user()->name);
+        $authId = Auth::id();
+        $connectionUrl = "{$siteUrl}/{$authSlug}/{$authId}/{$port}";
 
-        $prop = Prop::where('id', $prop_id)->where('user_id', Auth::id())->firstOrFail();
+        $prop = Prop::create(array_merge(
+            $request->validated(),
+            [
+                'user_id' => $authId,
+                'is_premium' => false,
+                'port' => $port,
+                'connection_url' => $connectionUrl,
+            ]
+        ));
 
-        $request->validate([
-            'country' => 'sometimes|required|string|max:255',
-            'exe_url' => 'sometimes|required|string|unique:props,exe_url,' . $prop->id,
-            'is_premium' => 'boolean',
-            'organization_location' => 'sometimes|required|string|max:255',
-            'port' => 'sometimes|required|integer',
-            'connection_url' => 'sometimes|required|string|max:255',
-        ]);
-
-        $prop->update($request->only([
-            'country',
-            'exe_url',
-            'is_premium',
-            'organization_location',
-            'port',
-            'connection_url',
-        ]));
-
-        return response()->json($prop, 200);
+        return response()->json(new PropResource($prop), 201);
     }
 
-  
-    public function delete_prop(Request $request)
+    /**
+     * Update an organization prop config.
+     */
+    public function update_prop(UpdatePropRequest $request): JsonResponse
     {
-        $prop_id = $request->validate([
+        $prop = Prop::where('id', $request->validated('prop_id'))
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $prop->update($request->validated());
+
+        return response()->json(new PropResource($prop->fresh()), 200);
+    }
+
+    /**
+     * Delete an organization prop config.
+     */
+    public function delete_prop(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
             'prop_id' => 'required|integer|exists:props,id'
         ]);
-        $prop = Prop::where('id', $prop_id)->where('user_id', Auth::id())->firstOrFail();
+
+        $prop = Prop::where('id', $validated['prop_id'])
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         $prop->delete();
 
         return response()->json(['message' => 'Prop deleted successfully'], 200);
     }
 
-    public function get_props()
+    /**
+     * Get all organization props for authenticated admin.
+     */
+    public function get_props(): JsonResponse
     {
-        $user_id = Auth::id();
-        $props = Prop::where('user_id', $user_id)->get();
+        $props = Prop::forAdmin()->get();
 
-        return response()->json($props, 200);
+        return response()->json(PropResource::collection($props), 200);
     }
 
-    public function generate_exe()
-{
-    $user = Auth::user();
-    $prop = Prop::where('user_id', $user->id)->latest()->first();
+    /**
+     * Call the external compiler to build a personalized client EXE.
+     */
+    public function generate_exe(): JsonResponse
+    {
+        $user = Auth::user();
+        $prop = Prop::where('user_id', $user->id)->latest()->first();
 
-    if (!$prop) {
-        return response()->json(['error' => 'No prop found for the authenticated user.'], 404);
-    }
+        if (!$prop) {
+            return response()->json(['error' => 'No prop found for the authenticated user.'], 404);
+        }
 
-    $connectionUrl = $prop->connection_url;
-    $port = $prop->port;
+        $exeGeneratorServerUrl = env('EXE_GENERATOR_SERVER_URL');
 
-    $exeGeneratorServer = env('EXE_GENERATOR_SERVER_URL'); 
+        if (!$exeGeneratorServerUrl) {
+            return response()->json(['error' => 'EXE Generator Server URL is not configured.'], 500);
+        }
 
-    $data = [
-        'connection_url' => $connectionUrl,
-        'port' => $port,
-    ];
+        try {
+            $response = Http::post($exeGeneratorServerUrl, [
+                'connection_url' => $prop->connection_url,
+                'port' => $prop->port,
+            ]);
 
-    $response = Http::post($exeGeneratorServer, $data);
+            if ($response->successful()) {
+                return response()->json(['status' => 'Waiting for exe to be generated.']);
+            }
+        } catch (\Exception $e) {
+            // Log or handle
+        }
 
-    if ($response->successful()) {
-        return response()->json(['status' => 'Waiting for exe to be generated.']);
-    } else {
         return response()->json(['error' => 'Failed to generate exe.'], 500);
     }
-}
 }
